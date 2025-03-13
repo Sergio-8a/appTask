@@ -1,0 +1,123 @@
+<div class="container">
+    <form [formGroup]="formTask" (submit)="validarCondicion() ? addTask() : updateTask('') " class="row ">
+        <div class="col">
+            <label for="nameTask" class="form-label">Title</label>
+            <input type="text" class="form-control" formControlName="nameTask" id="nameTask"
+                aria-describedby="nameTask">
+            <div *ngIf="formTask.get('nameTask')!.invalid && formTask.get('nameTask')!.touched" class="text-danger">
+                Name is required
+            </div>
+        </div>
+
+        <div class="col">
+            <label for="descriptionTask" class="form-label">Description</label>
+            <input type="text" class="form-control" formControlName="descriptionTask" id="descriptionTask">
+            <div *ngIf="formTask.get('descriptionTask')!.invalid && formTask.get('descriptionTask')!.touched"
+                class="text-danger">
+                Description is required
+            </div>
+        </div>
+        <div class="col">
+            <label for="statusTask" class="form-label">Status</label>
+            <select id="pais" class="form-control" class="form-control" formControlName="statusTask">
+                <option value="" disabled>Select a state</option>
+                <option *ngFor="let item of taskStatus" [value]="item.name">{{ item.name }}</option>
+            </select>
+            <div *ngIf="formTask.get('statusTask')!.invalid && formTask.get('statusTask')!.touched" class="text-danger">
+                Status is required
+            </div>
+            <!-- <input type="text" class="form-control" formControlName="statusTask" id="statusTask"> -->
+        </div>
+        <div class="col-12">
+            <br>
+            <p>Complete the form to enable button.</p>
+            <button type="submit" class="btn btn-success" [disabled]="!formTask.valid"> {{ isEditing ? 'Update Task' :
+                'Add task' }} </button>
+        </div>
+    </form>
+</div>
+<br>
+<div class="container">
+    <hr>
+</div>
+<br>
+<div class="container">
+    <form [formGroup]="formSearchTask" (submit)="getByState() " class="row ">
+
+        <div class="col-3">
+            <label for="statusTask" class="form-label">Select the state you wish to consult</label>
+            <select id="pais" class="form-control" class="form-control" formControlName="statusTask">
+                <option value="" disabled>Select a state</option>
+                <option *ngFor="let item of taskStatus" [value]="item.name">{{ item.name }}</option>
+            </select>
+            <div *ngIf="formSearchTask.get('statusTask')!.invalid && formSearchTask.get('statusTask')!.touched"
+                class="text-danger">
+                Status is required
+            </div>
+
+            <p>Complete the form to enable button.</p>
+            <button type="submit" class="btn btn-primary" [disabled]="!formSearchTask.valid"> Search</button>
+            &nbsp;
+            <button type="button" class="btn btn-secondary" (click)="getTasks()">Clear filter</button>
+        </div>
+    </form>
+</div>
+<br>
+<div class="container">
+    <hr>
+</div>
+<br>
+@if (responseTasks.length > 0) {
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name Task</th>
+                <th scope="col">Description Task</th>
+                <th scope="col">Status Task</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        @for (item of responseTasks; track item.id) {
+        <tbody>
+            <tr>
+                <td>{{ item.nameTask }}</td>
+                <td>{{ item.descriptionTask }}</td>
+                <td>{{ item.statusTask }}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-2" (click)="updateTask(item.id)">Edit</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal" (click)="deletemodal(item.id)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+        } @empty {
+        <li>There are no items.</li>
+        }
+
+    </table>
+</div>
+} @else {
+<div class="container">
+    There are no items.
+</div>
+}
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the task?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="deleteTask()">Save
+                    changes</button>
+            </div>
+        </div>
+    </div>
+</div>
